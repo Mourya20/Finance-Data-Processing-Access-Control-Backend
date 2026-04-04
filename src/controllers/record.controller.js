@@ -2,16 +2,44 @@ const service = require('../services/record.service');
 
 exports.create = async (req, res) => {
   try {
-    const { amount, type, category } = req.body;
-    if (!amount || amount <= 0) return res.status(400).json({ success: false, error: 'Invalid or missing amount. Positive number required.' });
-    if (!type || !['INCOME', 'EXPENSE'].includes(type)) return res.status(400).json({ success: false, error: 'Invalid or missing type. Must be INCOME or EXPENSE.' });
-    if (!category) return res.status(400).json({ success: false, error: 'Missing required field: category.' });
-    
-    const record = await service.createRecord({ ...req.body, userId: req.user.id });
+    const { amount, type, category, date } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid or missing amount. Positive number required.'
+      });
+    }
+
+    if (!type || !['INCOME', 'EXPENSE'].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid or missing type. Must be INCOME or EXPENSE.'
+      });
+    }
+
+    if (!category) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required field: category.'
+      });
+    }
+
+    const record = await service.createRecord({
+      ...req.body,
+      userId: req.user.id,
+      date: date ? new Date(date) : new Date()
+    });
+
     res.status(201).json({ success: true, data: record });
+
   } catch (err) {
     console.error('Record Creation Error:', err);
-    res.status(500).json({ success: false, error: 'Record creation failed due to an internal server error.' });
+
+    res.status(500).json({
+      success: false,
+      error: 'Record creation failed due to an internal server error.'
+    });
   }
 };
 
