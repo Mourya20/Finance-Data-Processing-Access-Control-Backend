@@ -15,8 +15,7 @@ exports.category = async (req, res) => {
     const data = await prisma.record.groupBy({
       by: ['category'],
       where: {
-        type: 'EXPENSE',
-        isDeleted: false
+        type: 'EXPENSE'
       },
       _sum: { amount: true }
     });
@@ -33,7 +32,7 @@ exports.category = async (req, res) => {
 };
 exports.recent = async (req, res) => {
   const data = await prisma.record.findMany({
-    where: { isDeleted: false },
+    where: {},
     take: 5,
     orderBy: { createdAt: 'desc' }
   });
@@ -64,11 +63,10 @@ exports.monthlyFinance = async (req, res) => {
   try {
     const data = await prisma.$queryRaw`
       SELECT 
-        strftime('%Y-%m', date) as period,
+        strftime('%Y-%m', createdAt) as period,
         SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END) as income,
         SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) as expense
       FROM record
-      WHERE isDeleted = false
       GROUP BY period
       ORDER BY period;
     `;
@@ -84,11 +82,10 @@ exports.quarterlyFinance = async (req, res) => {
   try {
     const data = await prisma.$queryRaw`
       SELECT 
-        strftime('%Y', date) || '-Q' || ((strftime('%m', date)-1)/3 + 1) as period,
+        strftime('%Y', createdAt) || '-Q' || ((strftime('%m', createdAt)-1)/3 + 1) as period,
         SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END) as income,
         SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) as expense
       FROM record
-      WHERE isDeleted = false
       GROUP BY period
       ORDER BY period;
     `;
@@ -104,11 +101,10 @@ exports.yearlyFinance = async (req, res) => {
   try {
     const data = await prisma.$queryRaw`
       SELECT 
-        strftime('%Y', date) as period,
+        strftime('%Y', createdAt) as period,
         SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END) as income,
         SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) as expense
       FROM record
-      WHERE isDeleted = false
       GROUP BY period
       ORDER BY period;
     `;
@@ -124,8 +120,7 @@ exports.categoryBreakdown = async (req, res) => {
   const data = await prisma.record.groupBy({
   by: ['category'],
   where: {
-    type: 'EXPENSE',
-    isDeleted: false
+    type: 'EXPENSE'
   },
   _sum: { amount: true },
   orderBy: {

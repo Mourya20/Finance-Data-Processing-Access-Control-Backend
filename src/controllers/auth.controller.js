@@ -1,4 +1,4 @@
-const prisma = new (require('@prisma/client').PrismaClient)();
+const prisma = require('../utils/prisma');
 const bcrypt = require('bcrypt');
 const generateToken = require('../utils/generateToken');
 

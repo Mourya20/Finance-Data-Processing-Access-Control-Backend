@@ -23,8 +23,7 @@ exports.checkBudget = async (req, res) => {
       _sum: { amount: true },
       where: {
         category: b.category,
-        type: 'EXPENSE',
-        isDeleted: false
+        type: 'EXPENSE'
       }
     });
 

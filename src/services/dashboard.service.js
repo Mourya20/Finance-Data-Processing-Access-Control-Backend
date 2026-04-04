@@ -1,8 +1,8 @@
-const prisma3 = new (require('@prisma/client').PrismaClient)();
+const prisma = require('../utils/prisma');
 
 exports.getSummary = async () => {
-  const income = await prisma3.record.aggregate({ _sum: { amount: true }, where: { type: 'INCOME' } });
-  const expense = await prisma3.record.aggregate({ _sum: { amount: true }, where: { type: 'EXPENSE' } });
+  const income = await prisma.record.aggregate({ _sum: { amount: true }, where: { type: 'INCOME' } });
+  const expense = await prisma.record.aggregate({ _sum: { amount: true }, where: { type: 'EXPENSE' } });
   return {
     totalIncome: income._sum.amount || 0,
     totalExpense: expense._sum.amount || 0,
