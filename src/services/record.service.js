@@ -1,4 +1,8 @@
-const prisma2 = new (require('@prisma/client').PrismaClient)();
+const prisma = require('../utils/prisma');
 
-exports.createRecord = (data) => prisma2.record.create({ data });
+exports.createRecord = async (data) => {
+  return prisma.record.create({
+    data
+  });
+};
 exports.getRecords = (query) => prisma2.record.findMany(query);
