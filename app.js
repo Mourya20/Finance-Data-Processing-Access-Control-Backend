@@ -15,7 +15,6 @@ app.use((req, res, next) => {
 });
 
 // SWAGGER 
-// SWAGGER 
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
@@ -39,7 +38,6 @@ const swaggerOptions = {
         }
       }
     },
-    security: [{ bearerAuth: [] }],
 
     paths: {
 
