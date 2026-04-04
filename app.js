@@ -1,23 +1,20 @@
 require('dotenv').config();
 const express = require('express');
 const rateLimit = require('./src/middleware/rateLimit');
-
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
-
 const app = express();
 
 app.use(express.json());
 app.use(rateLimit);
 
-//LOGGER (put BEFORE routes)
-
+//LOGGER 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
 
-//SWAGGER 
+// SWAGGER 
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
@@ -30,9 +27,109 @@ const swaggerOptions = {
       {
         url: "https://finance-data-processing-access-control-lxp4.onrender.com"
       }
-    ]
+    ],
+    paths: {
+      // AUTH
+      "/auth/register": {
+        post: {
+          summary: "Register new user",
+          responses: { 201: { description: "User created" } }
+        }
+      },
+      "/auth/login": {
+        post: {
+          summary: "Login user",
+          responses: { 200: { description: "JWT token returned" } }
+        }
+      },
+      // RECORDS
+      "/records": {
+        get: {
+          summary: "Get all records",
+          responses: { 200: { description: "Records list" } }
+        },
+        post: {
+          summary: "Create record (Admin only)",
+          responses: { 201: { description: "Record created" } }
+        }
+      },
+      "/records/{id}": {
+        put: {
+          summary: "Update record",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: { 200: { description: "Updated" } }
+        },
+        delete: {
+          summary: "Delete record",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: { 200: { description: "Deleted" } }
+        }
+      },
+
+      // DASHBOARD
+      "/dashboard/summary": {
+        get: {
+          summary: "Get financial summary",
+          responses: { 200: { description: "Summary data" } }
+        }
+      },
+      "/dashboard/recent": {
+        get: {
+          summary: "Get recent transactions",
+          responses: { 200: { description: "Recent data" } }
+        }
+      },
+      "/dashboard/category": {
+        get: {
+          summary: "Category totals",
+          responses: { 200: { description: "Category data" } }
+        }
+      },
+      "/dashboard/category-breakdown": {
+        get: {
+          summary: "Expense breakdown",
+          responses: { 200: { description: "Breakdown data" } }
+        }
+      },
+      "/dashboard/finance/monthly": {
+        get: {
+          summary: "Monthly financial analytics",
+          responses: { 200: { description: "Monthly finance" } }
+        }
+      },
+      "/dashboard/finance/quarterly": {
+        get: {
+          summary: "Quarterly financial analytics",
+          responses: { 200: { description: "Quarterly finance" } }
+        }
+      },
+      "/dashboard/finance/yearly": {
+        get: {
+          summary: "Yearly financial analytics",
+          responses: { 200: { description: "Yearly finance" } }
+        }
+      },
+
+      // BUDGET
+      "/budget": {
+        post: {
+          summary: "Set budget",
+          responses: { 201: { description: "Budget created" } }
+        }
+      },
+      "/budget/check": {
+        get: {
+          summary: "Check budget vs spending",
+          responses: { 200: { description: "Budget analysis" } }
+        }
+      }
+    }
   },
-  apis: [] // optional
+  apis: []
 };
 
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
@@ -45,17 +142,17 @@ app.use('/records', require('./src/routes/record.routes'));
 app.use('/dashboard', require('./src/routes/dashboard.routes'));
 app.use('/budget', require('./src/routes/budget.routes'));
 
-//ROOT 
+//ROOT
 app.get('/', (req, res) => {
   res.send("API Running");
 });
 
-// 404 HANDLER
+//404 HANDLER
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// ERROR HANDLER 
+//ERROR HANDLER
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: "Something went wrong" });
