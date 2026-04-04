@@ -29,7 +29,7 @@ const swaggerOptions = {
       }
     ],
 
-    //  AUTH BUTTON
+    // AUTH BUTTON
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -41,7 +41,7 @@ const swaggerOptions = {
 
     paths: {
 
-      //  AUTH
+      // AUTH (NO SECURITY)
       "/auth/register": {
         post: {
           summary: "Register new user",
@@ -85,13 +85,15 @@ const swaggerOptions = {
         }
       },
 
-      // RECORDS
+      // RECORDS (PROTECTED)
       "/records": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Get all records",
           responses: { 200: { description: "Records list" } }
         },
         post: {
+          security: [{ bearerAuth: [] }],
           summary: "Create record (Admin only)",
           requestBody: {
             required: true,
@@ -114,6 +116,7 @@ const swaggerOptions = {
 
       "/records/{id}": {
         put: {
+          security: [{ bearerAuth: [] }],
           summary: "Update record",
           parameters: [
             {
@@ -139,6 +142,7 @@ const swaggerOptions = {
           responses: { 200: { description: "Updated" } }
         },
         delete: {
+          security: [{ bearerAuth: [] }],
           summary: "Delete record",
           parameters: [
             {
@@ -152,9 +156,10 @@ const swaggerOptions = {
         }
       },
 
-      // DASHBOARD
+      // DASHBOARD (PROTECTED)
       "/dashboard/summary": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Get financial summary",
           responses: { 200: { description: "Summary data" } }
         }
@@ -162,6 +167,7 @@ const swaggerOptions = {
 
       "/dashboard/recent": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Get recent transactions",
           responses: { 200: { description: "Recent data" } }
         }
@@ -169,6 +175,7 @@ const swaggerOptions = {
 
       "/dashboard/category": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Category totals",
           responses: { 200: { description: "Category data" } }
         }
@@ -176,6 +183,7 @@ const swaggerOptions = {
 
       "/dashboard/category-breakdown": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Expense breakdown",
           responses: { 200: { description: "Breakdown data" } }
         }
@@ -183,13 +191,15 @@ const swaggerOptions = {
 
       "/dashboard/finance/monthly": {
         get: {
-          summary: "Monthly analytics (EBITDA, PAT)",
+          security: [{ bearerAuth: [] }],
+          summary: "Monthly analytics",
           responses: { 200: { description: "Monthly finance" } }
         }
       },
 
       "/dashboard/finance/quarterly": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Quarterly analytics",
           responses: { 200: { description: "Quarterly finance" } }
         }
@@ -197,14 +207,16 @@ const swaggerOptions = {
 
       "/dashboard/finance/yearly": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Yearly analytics",
           responses: { 200: { description: "Yearly finance" } }
         }
       },
 
-      // BUDGET
+      // BUDGET (PROTECTED)
       "/budget": {
         post: {
+          security: [{ bearerAuth: [] }],
           summary: "Set budget",
           requestBody: {
             required: true,
@@ -226,6 +238,7 @@ const swaggerOptions = {
 
       "/budget/check": {
         get: {
+          security: [{ bearerAuth: [] }],
           summary: "Check budget vs spending",
           responses: { 200: { description: "Budget analysis" } }
         }
