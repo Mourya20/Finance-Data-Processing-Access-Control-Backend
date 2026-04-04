@@ -15,6 +15,7 @@ app.use((req, res, next) => {
 });
 
 // SWAGGER 
+// SWAGGER 
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
@@ -28,20 +29,64 @@ const swaggerOptions = {
         url: "https://finance-data-processing-access-control-lxp4.onrender.com"
       }
     ],
+
+    //  AUTH BUTTON
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer"
+        }
+      }
+    },
+    security: [{ bearerAuth: [] }],
+
     paths: {
-      // AUTH
+
+      //  AUTH
       "/auth/register": {
         post: {
           summary: "Register new user",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    email: { type: "string", example: "user@test.com" },
+                    password: { type: "string", example: "123456" },
+                    role: { type: "string", example: "ADMIN" }
+                  }
+                }
+              }
+            }
+          },
           responses: { 201: { description: "User created" } }
         }
       },
+
       "/auth/login": {
         post: {
           summary: "Login user",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    email: { type: "string", example: "user@test.com" },
+                    password: { type: "string", example: "123456" }
+                  }
+                }
+              }
+            }
+          },
           responses: { 200: { description: "JWT token returned" } }
         }
       },
+
       // RECORDS
       "/records": {
         get: {
@@ -50,21 +95,60 @@ const swaggerOptions = {
         },
         post: {
           summary: "Create record (Admin only)",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    amount: { type: "number", example: 1000 },
+                    type: { type: "string", example: "EXPENSE" },
+                    category: { type: "string", example: "Food" }
+                  }
+                }
+              }
+            }
+          },
           responses: { 201: { description: "Record created" } }
         }
       },
+
       "/records/{id}": {
         put: {
           summary: "Update record",
           parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" }
+            }
           ],
+          requestBody: {
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    amount: { type: "number", example: 1200 },
+                    category: { type: "string", example: "Travel" }
+                  }
+                }
+              }
+            }
+          },
           responses: { 200: { description: "Updated" } }
         },
         delete: {
           summary: "Delete record",
           parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" }
+            }
           ],
           responses: { 200: { description: "Deleted" } }
         }
@@ -77,39 +161,45 @@ const swaggerOptions = {
           responses: { 200: { description: "Summary data" } }
         }
       },
+
       "/dashboard/recent": {
         get: {
           summary: "Get recent transactions",
           responses: { 200: { description: "Recent data" } }
         }
       },
+
       "/dashboard/category": {
         get: {
           summary: "Category totals",
           responses: { 200: { description: "Category data" } }
         }
       },
+
       "/dashboard/category-breakdown": {
         get: {
           summary: "Expense breakdown",
           responses: { 200: { description: "Breakdown data" } }
         }
       },
+
       "/dashboard/finance/monthly": {
         get: {
-          summary: "Monthly financial analytics",
+          summary: "Monthly analytics (EBITDA, PAT)",
           responses: { 200: { description: "Monthly finance" } }
         }
       },
+
       "/dashboard/finance/quarterly": {
         get: {
-          summary: "Quarterly financial analytics",
+          summary: "Quarterly analytics",
           responses: { 200: { description: "Quarterly finance" } }
         }
       },
+
       "/dashboard/finance/yearly": {
         get: {
-          summary: "Yearly financial analytics",
+          summary: "Yearly analytics",
           responses: { 200: { description: "Yearly finance" } }
         }
       },
@@ -118,15 +208,31 @@ const swaggerOptions = {
       "/budget": {
         post: {
           summary: "Set budget",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    category: { type: "string", example: "Food" },
+                    limit: { type: "number", example: 5000 }
+                  }
+                }
+              }
+            }
+          },
           responses: { 201: { description: "Budget created" } }
         }
       },
+
       "/budget/check": {
         get: {
           summary: "Check budget vs spending",
           responses: { 200: { description: "Budget analysis" } }
         }
       }
+
     }
   },
   apis: []
